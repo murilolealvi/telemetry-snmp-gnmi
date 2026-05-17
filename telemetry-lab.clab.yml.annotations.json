@@ -1,0 +1,91 @@
+{
+  "freeTextAnnotations": [],
+  "freeShapeAnnotations": [],
+  "trafficRateAnnotations": [],
+  "groupStyleAnnotations": [],
+  "networkNodeAnnotations": [],
+  "nodeAnnotations": [
+    {
+      "id": "rr",
+      "position": {
+        "x": 520,
+        "y": 280
+      }
+    },
+    {
+      "id": "pe1",
+      "position": {
+        "x": 300,
+        "y": 400
+      }
+    },
+    {
+      "id": "ce1",
+      "position": {
+        "x": 200,
+        "y": 400
+      },
+      "icon": "client"
+    },
+    {
+      "id": "ce2",
+      "position": {
+        "x": 900,
+        "y": 400
+      }
+    },
+    {
+      "id": "telegraf",
+      "position": {
+        "x": 220,
+        "y": 220
+      },
+      "icon": "controller"
+    },
+    {
+      "id": "c2",
+      "position": {
+        "x": 1000,
+        "y": 500
+      }
+    },
+    {
+      "id": "c1",
+      "position": {
+        "x": 100,
+        "y": 500
+      }
+    },
+    {
+      "id": "p3",
+      "position": {
+        "x": 520,
+        "y": 600
+      }
+    },
+    {
+      "id": "p2",
+      "position": {
+        "x": 620,
+        "y": 420
+      }
+    },
+    {
+      "id": "p1",
+      "position": {
+        "x": 440,
+        "y": 420
+      }
+    },
+    {
+      "id": "pe2",
+      "position": {
+        "x": 760,
+        "y": 420
+      }
+    }
+  ],
+  "edgeAnnotations": [],
+  "aliasEndpointAnnotations": [],
+  "viewerSettings": {}
+}

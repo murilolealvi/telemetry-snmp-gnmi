@@ -1,0 +1,71 @@
+name: gnmi-lab
+prefix: ""
+topology:
+  nodes:
+    # Monitoring pool
+    telegraf:
+      #collector
+      kind: linux
+      image: telegraf:latest
+      binds:
+        - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+
+    # prometheus: #database
+    #   kind: linux
+    #   image: prometheus:latest
+    #   binds:
+    #     - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+    # grafana: #dashboard
+    #   kind: linux
+    #   image: grafana:grafana/latest
+    #   ports:
+    #     - 3000:3000
+
+    # Nodes pool
+    rr:
+      kind: linux
+      image: quay.io/frrouting/frr:master
+      binds:
+        - ./frr/deamons:/etc/frr/deamons
+        - ./frr/frr.conf:/etc/frr/frr.conf
+    pe1:
+      kind: juniper_vjunosrouter
+      image: vrnetlab/juniper_vjunos-router:25.4R1.12
+    pe2:
+      kind: juniper_vjunosrouter
+      image: vrnetlab/juniper_vjunos-router:25.4R1.12
+    p1:
+      kind: juniper_vjunosrouter
+      image: vrnetlab/juniper_vjunos-router:25.4R1.12
+    p2:
+      kind: juniper_vjunosrouter
+      image: vrnetlab/juniper_vjunos-router:25.4R1.12
+    p3:
+      kind: juniper_vjunosrouter
+      image: vrnetlab/juniper_vjunos-router:25.4R1.12
+    ce1:
+      kind: juniper_vjunosrouter
+      image: vrnetlab/juniper_vjunos-router:25.4R1.12
+    ce2:
+      kind: juniper_vjunosrouter
+      image: vrnetlab/juniper_vjunos-router:25.4R1.12
+    c1:
+      kind: linux
+      image: alpine:latest
+    c2:
+      kind: linux
+      image: alpine:latest
+  links:
+    - endpoints: [ "rr:eth1", "pe1:ge-0/0/0" ]
+    - endpoints: [ "rr:eth2", "pe2:ge-0/0/0" ]
+    - endpoints: [ "pe1:ge-0/0/1", "ce1:ge-0/0/0" ]
+    - endpoints: [ "pe2:ge-0/0/1", "ce2:ge-0/0/0" ]
+    - endpoints: [ "ce1:ge-0/0/1", "c1:eth1" ]
+    - endpoints: [ "ce2:ge-0/0/1", "c2:eth1" ]
+    - endpoints: [ "pe1:ge-0/0/2", "p1:ge-0/0/2"]
+    - endpoints: [ "pe2:ge-0/0/2", "p2:ge-0/0/2"]
+    - endpoints: [ "p1:ge-0/0/1", "p2:ge-0/0/1"]
+    - endpoints: [ "p3:ge-0/0/3", "p2:ge-0/0/3"]
+    - endpoints: [ "p3:ge-0/0/0", "p1:ge-0/0/0"]
+    
