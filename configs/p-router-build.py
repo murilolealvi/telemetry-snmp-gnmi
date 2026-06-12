@@ -4,6 +4,7 @@ from jinja2 import Template
 with open('p-router.j2', 'r') as file:
     template = Template(file.read())
 
+# Map nodes as JSON into the template
 routers = [
     {
         "hostname": "p1",
