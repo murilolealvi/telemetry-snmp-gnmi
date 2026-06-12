@@ -1,0 +1,89 @@
+# Jinja2 template for PE-Routers
+
+# System
+system {
+    host-name {{ hostname }};
+    
+    root-authentication {
+        encrypted-password "{{ 'admin' | junos_hash }}";
+    }
+    
+    login {
+        user admin {
+            uid 2000;
+            class super-user;
+            authentication {
+                encrypted-password "{{ 'admin' | junos_hash }}";
+            }
+        }
+    }
+}
+
+# Interface Configuration
+interfaces {
+    lo0 {
+        unit 0 {
+            family inet {
+                address {{ loopback_ip }};
+            }
+            family mpls;
+        }
+    }
+    {{ core_iface }} {
+        description "to P-router";
+        unit 0 {
+            family inet {
+                address {{ core_ip }};
+            }
+            family mpls;
+        }
+    }
+    {{ ce_iface }} {
+        description "to CE";
+        unit 0 {
+            family inet {
+                address {{ ce_ip }};
+            }
+        }
+    }
+}
+
+# Protocols Configuration
+routing-options {
+    router-id {{ loopback_ip | replace("/32", "") }};
+    autonomous-system 65000;
+}
+
+protocols {
+    ospf {
+        area 0.0.0.0 {
+            interface lo0.0 {
+                passive;
+            }
+            interface {{ core_iface }}.0 {
+                interface-type p2p;
+            }
+        }
+    }
+    mpls {
+        interface {{ core_iface }}.0;
+    }
+    ldp {
+        track-igp-metric;
+        interface {{ core_iface }}.0;
+        interface lo0.0;
+    }
+    bgp {
+        group IBGP-RR {
+            type internal;
+            local-address {{ loopback_ip | replace("/32", "") }};
+            family inet {
+                unicast;
+            }
+            family inet-vpn {
+                unicast;
+            }
+            neighbor {{ rr_ip }};
+        }
+    }
+}
