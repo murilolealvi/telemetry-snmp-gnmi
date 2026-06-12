@@ -1,0 +1,35 @@
+! Jinja2 template for P-Routers
+!
+hostname {{ hostname }}
+management api gnmi
+   transport grpc default
+!
+! Interfaces Configuration
+interface Ethernet1
+   no switchport
+   ip address {{ eth1_ip }}
+   ip ospf network point-to-point
+   ip ospf area 0.0.0.0
+!
+interface Ethernet2
+   no switchport
+   ip address {{ eth2_ip }}
+   ip ospf network point-to-point
+   ip ospf area 0.0.0.0
+!
+interface Ethernet3
+   no switchport
+   ip address {{ eth3_ip }}
+   ip ospf network point-to-point
+   ip ospf area 0.0.0.0
+!
+interface Loopback0
+   ip address {{ loopback_ip }}
+   ip ospf area 0.0.0.0
+!
+! OSPF Underlay
+router ospf 1
+   router-id {{ loopback_ip | replace("/32", "") }}
+   passive-interface Loopback0
+!
+end
