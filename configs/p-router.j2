@@ -3,32 +3,47 @@
 hostname {{ hostname }}
 username admin privilege 15 secret admin
 ip routing
+service routing protocols model multi-agent
 ! Telemetry
 management api gnmi
    transport grpc default
 !
+! LDP Configuration
+mpls ip
+mpls ldp
+   router-id interface Loopback0
+   transport-address interface Loopback0
+   no shutdown
 ! Interfaces Configuration
 interface Ethernet1
    no switchport
    ip address {{ eth1_ip }}
    ip ospf network point-to-point
    ip ospf area 0.0.0.0
+   mpls ip
+   mpls ldp interface
 !
 interface Ethernet2
    no switchport
    ip address {{ eth2_ip }}
    ip ospf network point-to-point
    ip ospf area 0.0.0.0
+   mpls ip
+   mpls ldp interface
 !
 interface Ethernet3
    no switchport
    ip address {{ eth3_ip }}
    ip ospf network point-to-point
    ip ospf area 0.0.0.0
+   mpls ip
+   mpls ldp interface
 !
 interface Loopback0
    ip address {{ loopback_ip }}
    ip ospf area 0.0.0.0
+   mpls ip
+   mpls ldp interface
 !
 ! OSPF Underlay
 router ospf 1
