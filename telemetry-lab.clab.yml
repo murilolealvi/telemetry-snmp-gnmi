@@ -1,20 +1,32 @@
 name: gnmi-lab
 prefix: ""
+
+mgmt:
+  network: core-mgmt
+  ipv4-subnet: 10.10.10.0/24
+
 topology:
+  kinds:
+    juniper_vjunosrouter:
+      image: vrnetlab/juniper_vjunos-router:25.4R1.12
+    arista_ceos:
+      image: ceos:4.36.0F
+    linux:
+      image: alpine:latest
   nodes:
     # Monitoring pool
-    telegraf:
-      #collector
-      kind: linux
-      image: telegraf:latest
-      binds:
-        - ./telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    # telegraf:
+    #   #collector
+    #   kind: linux
+    #   image: telegraf:latest
+    #   binds:
+    #     - configs/telegraf.conf:/etc/telegraf/telegraf.conf:ro
 
     # prometheus: #database
     #   kind: linux
     #   image: prometheus:latest
     #   binds:
-    #     - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    #     - configs/prometheus.yml:/etc/prometheus/prometheus.yml:ro
 
     # grafana: #dashboard
     #   kind: linux
@@ -23,49 +35,52 @@ topology:
     #     - 3000:3000
 
     # Nodes pool
+    #control plane
     rr:
-      kind: linux
-      image: quay.io/frrouting/frr:master
-      binds:
-        - ./frr/deamons:/etc/frr/deamons
-        - ./frr/frr.conf:/etc/frr/frr.conf
+      kind: arista_ceos
+      mgmt-ipv4: 10.10.10.100
+      startup-config: configs/rr-config.cfg
     pe1:
       kind: juniper_vjunosrouter
-      image: vrnetlab/juniper_vjunos-router:25.4R1.12
+      mgmt-ipv4: 10.10.10.10
     pe2:
       kind: juniper_vjunosrouter
-      image: vrnetlab/juniper_vjunos-router:25.4R1.12
+      mgmt-ipv4: 10.10.10.20
+    #data plane
     p1:
-      kind: juniper_vjunosrouter
-      image: vrnetlab/juniper_vjunos-router:25.4R1.12
+      kind: arista_ceos
+      mgmt-ipv4: 10.10.10.30
     p2:
-      kind: juniper_vjunosrouter
-      image: vrnetlab/juniper_vjunos-router:25.4R1.12
+      kind: arista_ceos
+      mgmt-ipv4: 10.10.10.40
     p3:
-      kind: juniper_vjunosrouter
-      image: vrnetlab/juniper_vjunos-router:25.4R1.12
+      kind: arista_ceos
+      mgmt-ipv4: 10.10.10.50
+    #customer edges/hosts
     ce1:
-      kind: juniper_vjunosrouter
-      image: vrnetlab/juniper_vjunos-router:25.4R1.12
+      kind: linux
     ce2:
-      kind: juniper_vjunosrouter
-      image: vrnetlab/juniper_vjunos-router:25.4R1.12
-    c1:
       kind: linux
-      image: alpine:latest
-    c2:
-      kind: linux
-      image: alpine:latest
   links:
+    # Route Reflector to PEs
     - endpoints: [ "rr:eth1", "pe1:ge-0/0/0" ]
+      ipv4: [ "10.1.10.0/31", "10.1.10.1/31" ]
     - endpoints: [ "rr:eth2", "pe2:ge-0/0/0" ]
-    - endpoints: [ "pe1:ge-0/0/1", "ce1:ge-0/0/0" ]
-    - endpoints: [ "pe2:ge-0/0/1", "ce2:ge-0/0/0" ]
-    - endpoints: [ "ce1:ge-0/0/1", "c1:eth1" ]
-    - endpoints: [ "ce2:ge-0/0/1", "c2:eth1" ]
-    - endpoints: [ "pe1:ge-0/0/2", "p1:ge-0/0/2"]
-    - endpoints: [ "pe2:ge-0/0/2", "p2:ge-0/0/2"]
-    - endpoints: [ "p1:ge-0/0/1", "p2:ge-0/0/1"]
-    - endpoints: [ "p3:ge-0/0/3", "p2:ge-0/0/3"]
-    - endpoints: [ "p3:ge-0/0/0", "p1:ge-0/0/0"]
-    
+      ipv4: [ "10.1.20.0/31", "10.1.20.1/31" ]
+    # PE to P-Router Uplinks
+    - endpoints: [ "pe1:ge-0/0/2", "p1:eth1" ]
+      ipv4: [ "10.1.1.0/31", "10.1.1.1/31" ]
+    - endpoints: [ "pe2:ge-0/0/2", "p2:eth1" ]
+      ipv4: [ "10.1.2.0/31", "10.1.2.1/31" ]
+    # Core P-Router Mesh
+    - endpoints: [ "p1:eth2", "p2:eth2" ]
+      ipv4: [ "10.1.12.0/31", "10.1.12.1/31" ]
+    - endpoints: [ "p3:eth1", "p2:eth3" ]
+      ipv4: [ "10.1.23.0/31", "10.1.23.1/31" ]
+    - endpoints: [ "p3:eth2", "p1:eth3" ]
+      ipv4: [ "10.1.13.0/31", "10.1.13.1/31" ]
+    # Provider Edge to Customer Edge
+    - endpoints: [ "pe1:ge-0/0/1", "ce1:eth1" ]
+      ipv4: [ "192.168.11.1/24", "192.168.11.2/24" ]
+    - endpoints: [ "pe2:ge-0/0/1", "ce2:eth1" ]
+      ipv4: [ "192.168.12.1/24", "192.168.12.2/24" ]

@@ -10,29 +10,33 @@
       "position": {
         "x": 520,
         "y": 280
-      }
+      },
+      "interfacePattern": "e1-{n}"
     },
     {
       "id": "pe1",
       "position": {
         "x": 300,
-        "y": 400
+        "y": 420
       }
     },
     {
       "id": "ce1",
       "position": {
-        "x": 200,
+        "x": 180,
         "y": 400
       },
-      "icon": "client"
+      "icon": "client",
+      "interfacePattern": "e1-{n}"
     },
     {
       "id": "ce2",
       "position": {
-        "x": 900,
+        "x": 860,
         "y": 400
-      }
+      },
+      "interfacePattern": "e1-{n}",
+      "icon": "client"
     },
     {
       "id": "telegraf",
@@ -60,27 +64,30 @@
       "id": "p3",
       "position": {
         "x": 520,
-        "y": 600
-      }
+        "y": 540
+      },
+      "interfacePattern": "e1-{n}"
     },
     {
       "id": "p2",
       "position": {
         "x": 620,
         "y": 420
-      }
+      },
+      "interfacePattern": "e1-{n}"
     },
     {
       "id": "p1",
       "position": {
         "x": 440,
         "y": 420
-      }
+      },
+      "interfacePattern": "e1-{n}"
     },
     {
       "id": "pe2",
       "position": {
-        "x": 760,
+        "x": 740,
         "y": 420
       }
     }
