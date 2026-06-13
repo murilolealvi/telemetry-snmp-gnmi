@@ -29,6 +29,14 @@ interfaces {
             family mpls;
         }
     }
+    {{ rr_iface }} {
+        description "to RR";
+        unit 0 {
+            family inet {
+                address {{ rr_iface_ip }};
+            }
+        }
+    }
     {{ core_iface }} {
         description "to P-router";
         unit 0 {
@@ -63,6 +71,9 @@ protocols {
             interface {{ core_iface }}.0 {
                 interface-type p2p;
             }
+            interface {{ rr_iface }}.0 {
+                interface-type p2p;
+            }
         }
     }
     mpls {
@@ -84,6 +95,29 @@ protocols {
                 unicast;
             }
             neighbor {{ rr_ip }};
+        }
+    }
+}
+
+# VRF Configuration
+routing-instances {
+    CUSTOMER-VRF {
+        instance-type vrf;
+        interface {{ ce_iface }}.0;
+    
+        route-distinguisher {{ loopback_ip | replace("/32", "") }}:100;
+        
+        vrf-target target:65000:100;
+        vrf-table-label;
+        
+        protocols {
+            bgp {
+                group CE-EBGP {
+                    type external;
+                    peer-as {{ ce_peer_as }};
+                    neighbor {{ ce_peer_ip }};
+                }
+            }
         }
     }
 }

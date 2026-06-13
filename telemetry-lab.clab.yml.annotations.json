@@ -11,7 +11,8 @@
         "x": 520,
         "y": 280
       },
-      "interfacePattern": "e1-{n}"
+      "interfacePattern": "e1-{n}",
+      "icon": "super-spine"
     },
     {
       "id": "pe1",

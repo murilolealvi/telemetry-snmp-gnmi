@@ -2,7 +2,7 @@ name: gnmi-lab
 prefix: ""
 
 mgmt:
-  network: core-mgmt
+  network: mgmt-v4
   ipv4-subnet: 10.10.10.0/24
 
 topology:
@@ -12,7 +12,7 @@ topology:
     arista_ceos:
       image: ceos:4.36.0F
     linux:
-      image: alpine:latest
+      image: pierky/exabgp
   nodes:
     # Monitoring pool
     # telegraf:
@@ -39,28 +39,45 @@ topology:
     rr:
       kind: arista_ceos
       mgmt-ipv4: 10.10.10.100
-      startup-config: configs/rr-config.cfg
+      startup-config: configs/rr.cfg
     pe1:
       kind: juniper_vjunosrouter
       mgmt-ipv4: 10.10.10.10
+      startup-config: configs/pe1.cfg
     pe2:
       kind: juniper_vjunosrouter
       mgmt-ipv4: 10.10.10.20
+      startup-config: configs/pe2.cfg
     #data plane
     p1:
       kind: arista_ceos
       mgmt-ipv4: 10.10.10.30
+      startup-config: configs/p1.cfg
     p2:
       kind: arista_ceos
       mgmt-ipv4: 10.10.10.40
+      startup-config: configs/p2.cfg
     p3:
       kind: arista_ceos
       mgmt-ipv4: 10.10.10.50
+      startup-config: configs/p3.cfg
     #customer edges/hosts
     ce1:
       kind: linux
+      binds:
+        - configs/ce1.conf:/etc/exabgp/exabgp.conf:ro
+      exec:
+        - ip addr add 192.168.11.2/24 dev eth1
+        #- ip route add default via 192.168.12.1
+        - exabgp /etc/exabgp/exabgp.conf &
     ce2:
       kind: linux
+      binds:
+        - configs/ce2.conf:/etc/exabgp/exabgp.conf:ro
+      exec:
+        - ip addr add 192.168.12.2/24 dev eth1
+        #- ip route add default via 192.168.12.1
+        - exabgp /etc/exabgp/exabgp.conf &
   links:
     # Route Reflector to PEs
     - endpoints: [ "rr:eth1", "pe1:ge-0/0/0" ]
