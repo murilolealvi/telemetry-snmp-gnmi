@@ -17,6 +17,18 @@ system {
             }
         }
     }
+# gNMI Configuration
+    services {
+        extension-service {
+            request-response {
+                grpc {
+                    clear-text {
+                        port 32767;
+                    }
+                }
+            }
+        }
+    }
 }
 
 # Interface Configuration
@@ -119,5 +131,12 @@ routing-instances {
                 }
             }
         }
+    }
+}
+
+# SNMP Configuration
+snmp {
+    community public {
+        authorization read-only;
     }
 }
