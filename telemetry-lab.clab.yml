@@ -2,8 +2,9 @@ name: gnmi-lab
 prefix: ""
 
 mgmt:
-  network: mgmt-v4
+  network: core-mgmt
   ipv4-subnet: 10.10.10.0/24
+  ipv6-subnet: 2001:db8::/64
 
 topology:
   kinds:
@@ -11,28 +12,40 @@ topology:
       image: vrnetlab/juniper_vjunos-router:25.4R1.12
     arista_ceos:
       image: ceos:4.36.0F
-    linux:
-      image: pierky/exabgp
+
   nodes:
     # Monitoring pool
-    # telegraf:
-    #   #collector
-    #   kind: linux
-    #   image: telegraf:latest
-    #   binds:
-    #     - configs/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    telegraf:
+      #collector
+      kind: linux
+      image: telegraf:latest
+      mgmt-ipv4: 10.10.10.201
+      binds:
+        - configs/telegraf.conf:/etc/telegraf/telegraf.conf:ro
 
-    # prometheus: #database
-    #   kind: linux
-    #   image: prometheus:latest
-    #   binds:
-    #     - configs/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    prometheus:
+      #database
+      kind: linux
+      image: prom/prometheus:latest
+      mgmt-ipv4: 10.10.10.202
+      binds:
+        - configs/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      ports:
+        - 9090:9090
 
-    # grafana: #dashboard
-    #   kind: linux
-    #   image: grafana:grafana/latest
-    #   ports:
-    #     - 3000:3000
+    grafana:
+      #dashboard
+      kind: linux
+      image: grafana/grafana:latest
+      mgmt-ipv4: 10.10.10.203
+      ports:
+        - 3000:3000
+      env:
+        GF_SECURITY_ADMIN_USER: admin
+        GF_SECURITY_ADMIN_PASSWORD: admin
+      binds:
+        - configs/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+        - configs/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
 
     # Nodes pool
     #control plane
@@ -44,10 +57,19 @@ topology:
       kind: juniper_vjunosrouter
       mgmt-ipv4: 10.10.10.10
       startup-config: configs/pe1.cfg
+      env:
+        CLAB_MGMT_PASSTHROUGH: "true"
+      ports:
+        # - "9339:9339/tcp"
     pe2:
       kind: juniper_vjunosrouter
       mgmt-ipv4: 10.10.10.20
+      mgmt-ipv6: 2001:db8::20
       startup-config: configs/pe2.cfg
+      env:
+        CLAB_MGMT_PASSTHROUGH: "true"
+      ports:
+        # - "9340:9339/tcp"
     #data plane
     p1:
       kind: arista_ceos
@@ -64,18 +86,20 @@ topology:
     #customer edges/hosts
     ce1:
       kind: linux
+      image: pierky/exabgp
       binds:
         - configs/ce1.conf:/etc/exabgp/exabgp.conf:ro
       exec:
-        - ip addr add 192.168.11.2/24 dev eth1
+        #- ip addr add 192.168.11.2/24 dev eth1
         #- ip route add default via 192.168.12.1
         - exabgp /etc/exabgp/exabgp.conf &
     ce2:
       kind: linux
+      image: pierky/exabgp
       binds:
         - configs/ce2.conf:/etc/exabgp/exabgp.conf:ro
       exec:
-        - ip addr add 192.168.12.2/24 dev eth1
+        #- ip addr add 192.168.12.2/24 dev eth1
         #- ip route add default via 192.168.12.1
         - exabgp /etc/exabgp/exabgp.conf &
   links:
