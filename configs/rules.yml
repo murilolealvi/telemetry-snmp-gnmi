@@ -1,0 +1,14 @@
+groups:
+  - name: bgp_snmp_joins
+    rules:
+      - record: juniper_bgp_prefixes_accepted
+        expr: >
+          label_replace(
+            snmp_juniper_bgp_prefixes_jnxBgpM2PrefixOutPrefixes{agent_host=~"pe1"}, 
+            "temp_join_id", "$1", "index", "^(\\d+)\\..*"
+          )
+          * on (agent_host, temp_join_id) group_left(PeerNeighbor)
+          count_values by (agent_host, PeerNeighbor) (
+            "temp_join_id", 
+            snmp_juniper_bgp_peers_jnxBgpM2PeerIndex{agent_host=~"pe1", PeerNeighbor!=""}
+          )

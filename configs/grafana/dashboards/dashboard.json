@@ -4,22 +4,22 @@
   "metadata": {
     "name": "adsqpjm",
     "namespace": "default",
-    "uid": "cd96081c-f84e-47b0-9d7e-2979a5714c15",
-    "resourceVersion": "1782766503266988",
-    "generation": 9,
-    "creationTimestamp": "2026-06-29T19:26:43Z",
+    "uid": "0e9c8d29-4d2c-4c3a-9c4f-0530d29334cf",
+    "resourceVersion": "1783484341098001",
+    "generation": 2,
+    "creationTimestamp": "2026-07-08T03:40:58Z",
     "labels": {
-      "grafana.app/deprecatedInternalID": "20930765791232"
+      "grafana.app/deprecatedInternalID": "3044414159798272"
     },
     "annotations": {
       "grafana.app/createdBy": "access-policy:service",
       "grafana.app/managedBy": "classic-file-provisioning",
       "grafana.app/managerId": "default",
-      "grafana.app/sourceChecksum": "7552519514a97f6b4575873e6dbc3bb9",
+      "grafana.app/sourceChecksum": "9821b8526a89b99dcb2ec26b883135d0",
       "grafana.app/sourcePath": "/etc/grafana/provisioning/dashboards/dashboard.json",
-      "grafana.app/sourceTimestamp": "1782766498000",
+      "grafana.app/sourceTimestamp": "1783484334000",
       "grafana.app/updatedBy": "access-policy:service",
-      "grafana.app/updatedTimestamp": "2026-06-29T20:55:03Z",
+      "grafana.app/updatedTimestamp": "2026-07-08T04:19:01Z",
       "grafana.app/folder": ""
     }
   },
@@ -338,7 +338,7 @@
                       "spec": {
                         "editorMode": "code",
                         "expr": "snmp_juniper_bgp_prefixes_jnxBgpM2PrefixInPrefixesAccepted{agent_host=~\"$Node\"}",
-                        "legendFormat": "{{SAFI}}",
+                        "legendFormat": "{{PeerNeighbor}} IN",
                         "range": true
                       },
                       "version": "v0"
@@ -360,7 +360,7 @@
                         "editorMode": "code",
                         "expr": "- snmp_juniper_bgp_prefixes_jnxBgpM2PrefixOutPrefixes{agent_host=~\"$Node\"}",
                         "instant": false,
-                        "legendFormat": "{{SAFI}}",
+                        "legendFormat": "{{PeerNeighbor}} OUT",
                         "range": true
                       },
                       "version": "v0"
@@ -403,9 +403,9 @@
                       "viz": false
                     },
                     "insertNulls": false,
-                    "lineInterpolation": "linear",
+                    "lineInterpolation": "smooth",
                     "lineWidth": 1,
-                    "pointSize": 5,
+                    "pointSize": 1,
                     "scaleDistribution": {
                       "type": "linear"
                     },
@@ -477,8 +477,8 @@
                       "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "gnmi_bgp_prefixes_accepted{source=\"$Node\"}",
-                        "legendFormat": "{{neighbor_address}}/{{afi_safi_name}} IN",
+                        "expr": "gnmi_bgp_prefixes_accepted{source=\"$Node\", afi_safi_name=\"IPV4_UNICAST\"}",
+                        "legendFormat": "{{neighbor_address}} IN",
                         "range": true
                       },
                       "version": "v0"
@@ -498,9 +498,9 @@
                       "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "- gnmi_bgp_prefixes_sent{source=\"$Node\"}",
+                        "expr": "- gnmi_bgp_prefixes_sent{source=\"$Node\",  afi_safi_name=\"IPV4_UNICAST\"}",
                         "instant": false,
-                        "legendFormat": "{{neighbor_address}}/{{afi_safi_name}} OUT",
+                        "legendFormat": "{{neighbor_address}} OUT",
                         "range": true
                       },
                       "version": "v0"

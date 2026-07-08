@@ -69,6 +69,15 @@ interfaces {
     }
 }
 
+policy-options {
+    policy-statement NEXT-HOP-SELF {
+        then {
+            next-hop self;
+            accept;
+        }
+    }
+}
+
 # Protocols Configuration
 routing-options {
     router-id {{ loopback_ip | replace("/32", "") }};
@@ -109,28 +118,10 @@ protocols {
             }
             neighbor {{ rr_ip }};
         }
-    }
-}
-
-# VRF Configuration
-routing-instances {
-    CUSTOMER-VRF {
-        instance-type vrf;
-        interface {{ ce_iface }}.0;
-    
-        route-distinguisher {{ loopback_ip | replace("/32", "") }}:100;
-        
-        vrf-target target:65000:100;
-        vrf-table-label;
-        
-        protocols {
-            bgp {
-                group CE-EBGP {
-                    type external;
-                    peer-as {{ ce_peer_as }};
-                    neighbor {{ ce_peer_ip }};
-                }
-            }
+        group EBGP {
+            type external;
+            peer-as {{ ce_peer_as }};
+            neighbor {{ ce_peer_ip }};
         }
     }
 }
