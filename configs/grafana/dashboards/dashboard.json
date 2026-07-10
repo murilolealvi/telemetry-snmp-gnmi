@@ -4,22 +4,22 @@
   "metadata": {
     "name": "adsqpjm",
     "namespace": "default",
-    "uid": "0e9c8d29-4d2c-4c3a-9c4f-0530d29334cf",
-    "resourceVersion": "1783484341098001",
+    "uid": "1f66e4e8-abd6-4666-a069-5692eea1919c",
+    "resourceVersion": "1783653432796007",
     "generation": 2,
-    "creationTimestamp": "2026-07-08T03:40:58Z",
+    "creationTimestamp": "2026-07-10T02:19:57Z",
     "labels": {
-      "grafana.app/deprecatedInternalID": "3044414159798272"
+      "grafana.app/deprecatedInternalID": "3748802382983168"
     },
     "annotations": {
       "grafana.app/createdBy": "access-policy:service",
       "grafana.app/managedBy": "classic-file-provisioning",
       "grafana.app/managerId": "default",
-      "grafana.app/sourceChecksum": "9821b8526a89b99dcb2ec26b883135d0",
+      "grafana.app/sourceChecksum": "bb58a215466f6fb908a846eca188fef2",
       "grafana.app/sourcePath": "/etc/grafana/provisioning/dashboards/dashboard.json",
-      "grafana.app/sourceTimestamp": "1783484334000",
+      "grafana.app/sourceTimestamp": "1783653427000",
       "grafana.app/updatedBy": "access-policy:service",
-      "grafana.app/updatedTimestamp": "2026-07-08T04:19:01Z",
+      "grafana.app/updatedTimestamp": "2026-07-10T03:17:12Z",
       "grafana.app/folder": ""
     }
   },
@@ -337,7 +337,7 @@
                       "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "snmp_juniper_bgp_prefixes_jnxBgpM2PrefixInPrefixesAccepted{agent_host=~\"$Node\"}",
+                        "expr": "snmp_juniper_bgp_prefixes_jnxBgpM2PrefixInPrefixesAccepted{agent_host=~\"$Node\",AFI=\"1\",SAFI=\"1\"} or snmp_arista_bgp_prefixes_aristaBgp4V2PrefixInPrefixesAccepted{agent_host=~\"$Node\",AFI=\"1\",SAFI=\"1\"}",
                         "legendFormat": "{{PeerNeighbor}} IN",
                         "range": true
                       },
@@ -358,7 +358,7 @@
                       "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "- snmp_juniper_bgp_prefixes_jnxBgpM2PrefixOutPrefixes{agent_host=~\"$Node\"}",
+                        "expr": "- snmp_juniper_bgp_prefixes_jnxBgpM2PrefixOutPrefixes{agent_host=~\"$Node\",AFI=\"1\",SAFI=\"1\"} or snmp_arista_bgp_prefixes_aristaBgp4V2PrefixOutPrefixes{agent_host=~\"$Node\",AFI=\"1\",SAFI=\"1\"}",
                         "instant": false,
                         "legendFormat": "{{PeerNeighbor}} OUT",
                         "range": true
@@ -477,7 +477,7 @@
                       "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "gnmi_bgp_prefixes_accepted{source=\"$Node\", afi_safi_name=\"IPV4_UNICAST\"}",
+                        "expr": "gnmi_bgp_prefixes_installed{source=\"$Node\", afi_safi_name=\"IPV4_UNICAST\"}",
                         "legendFormat": "{{neighbor_address}} IN",
                         "range": true
                       },
@@ -574,7 +574,32 @@
                     ]
                   }
                 },
-                "overrides": []
+                "overrides": [
+                  {
+                    "__systemRef": "hideSeriesFrom",
+                    "matcher": {
+                      "id": "byNames",
+                      "options": {
+                        "mode": "exclude",
+                        "names": [
+                          "10.0.0.10 IN"
+                        ],
+                        "prefix": "All except:",
+                        "readOnly": true
+                      }
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.hideFrom",
+                        "value": {
+                          "legend": false,
+                          "tooltip": true,
+                          "viz": true
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               "options": {
                 "annotations": {
@@ -777,6 +802,28 @@
                       "version": "v0"
                     },
                     "refId": "A"
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "PBFA97CFB590B2093"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "max by (ldp_peer) (gnmi_ldp_state_arista_ldp_session_state_int{source=\"$Node\"})",
+                        "instant": false,
+                        "legendFormat": "{{ldp_peer}}",
+                        "range": true
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "B"
                   }
                 }
               ],
