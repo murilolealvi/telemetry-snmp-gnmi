@@ -116,6 +116,7 @@ protocols {
             family inet-vpn {
                 unicast;
             }
+            export NEXT-HOP-SELF;
             neighbor {{ rr_ip }};
         }
         group EBGP {

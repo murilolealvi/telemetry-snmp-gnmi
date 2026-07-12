@@ -4,22 +4,20 @@
   "metadata": {
     "name": "adsqpjm",
     "namespace": "default",
-    "uid": "1f66e4e8-abd6-4666-a069-5692eea1919c",
-    "resourceVersion": "1783653432796007",
-    "generation": 2,
-    "creationTimestamp": "2026-07-10T02:19:57Z",
+    "uid": "2da1b392-2221-4807-89a7-a145e125918e",
+    "resourceVersion": "1783789663175010",
+    "generation": 1,
+    "creationTimestamp": "2026-07-11T16:54:02Z",
     "labels": {
-      "grafana.app/deprecatedInternalID": "3748802382983168"
+      "grafana.app/deprecatedInternalID": "4331157449936896"
     },
     "annotations": {
       "grafana.app/createdBy": "access-policy:service",
       "grafana.app/managedBy": "classic-file-provisioning",
       "grafana.app/managerId": "default",
-      "grafana.app/sourceChecksum": "bb58a215466f6fb908a846eca188fef2",
+      "grafana.app/sourceChecksum": "bbee983786c05a4db0b1fb809972616b",
       "grafana.app/sourcePath": "/etc/grafana/provisioning/dashboards/dashboard.json",
-      "grafana.app/sourceTimestamp": "1783653427000",
-      "grafana.app/updatedBy": "access-policy:service",
-      "grafana.app/updatedTimestamp": "2026-07-10T03:17:12Z",
+      "grafana.app/sourceTimestamp": "1783789658000",
       "grafana.app/folder": ""
     }
   },
@@ -574,32 +572,7 @@
                     ]
                   }
                 },
-                "overrides": [
-                  {
-                    "__systemRef": "hideSeriesFrom",
-                    "matcher": {
-                      "id": "byNames",
-                      "options": {
-                        "mode": "exclude",
-                        "names": [
-                          "10.0.0.10 IN"
-                        ],
-                        "prefix": "All except:",
-                        "readOnly": true
-                      }
-                    },
-                    "properties": [
-                      {
-                        "id": "custom.hideFrom",
-                        "value": {
-                          "legend": false,
-                          "tooltip": true,
-                          "viz": true
-                        }
-                      }
-                    ]
-                  }
-                ]
+                "overrides": []
               },
               "options": {
                 "annotations": {
@@ -959,7 +932,7 @@
                       "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "(rate(interfaces_telemetry_in_octets{source=~\"$Node\", name=~\"$Interface\"}[1m]) * 8)",
+                        "expr": "(rate(interfaces_telemetry_in_octets{source=~\"$Node\", name=~\"$Interface\"}[30s]) * 8)",
                         "legendFormat": "{{name}} IN",
                         "range": true
                       },
@@ -980,7 +953,7 @@
                       "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "(rate(interfaces_telemetry_out_octets{source=~\"$Node\", name=~\"$Interface\"}[1m]) * -8)",
+                        "expr": "(rate(interfaces_telemetry_out_octets{source=~\"$Node\", name=~\"$Interface\"}[30s]) * -8)",
                         "instant": false,
                         "legendFormat": "{{name}} OUT",
                         "range": true
