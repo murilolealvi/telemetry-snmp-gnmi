@@ -10,6 +10,8 @@ management api gnmi
    transport grpc default
    provider eos-native
 snmp-server community public ro
+snmp-server host {{ nms_ip }} traps version 2c public udp-port 1620
+snmp-server enable traps mpls-ldp
 
 ! LDP Configuration
 mpls ip

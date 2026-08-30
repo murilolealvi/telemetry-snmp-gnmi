@@ -17,27 +17,27 @@
     {
       "id": "pe1",
       "position": {
-        "x": 300,
+        "x": 340,
         "y": 420
       }
     },
     {
       "id": "ce1",
       "position": {
-        "x": 180,
+        "x": 220,
         "y": 400
       },
-      "icon": "client",
+      "icon": "pe",
       "interfacePattern": "e1-{n}"
     },
     {
       "id": "ce2",
       "position": {
-        "x": 860,
+        "x": 820,
         "y": 400
       },
       "interfacePattern": "e1-{n}",
-      "icon": "client"
+      "icon": "pe"
     },
     {
       "id": "telegraf",
@@ -48,49 +48,67 @@
       "icon": "controller"
     },
     {
-      "id": "c2",
+      "id": "prometheus",
       "position": {
-        "x": 1000,
-        "y": 500
-      }
+        "x": 340,
+        "y": 220
+      },
+      "icon": "controller"
     },
     {
-      "id": "c1",
+      "id": "grafana",
       "position": {
-        "x": 100,
-        "y": 500
-      }
+        "x": 280,
+        "y": 220
+      },
+      "icon": "controller"
     },
     {
       "id": "p3",
       "position": {
         "x": 520,
-        "y": 540
+        "y": 500
       },
       "interfacePattern": "e1-{n}"
     },
     {
       "id": "p2",
       "position": {
-        "x": 620,
-        "y": 420
+        "x": 580,
+        "y": 400
       },
       "interfacePattern": "e1-{n}"
     },
     {
       "id": "p1",
       "position": {
-        "x": 440,
-        "y": 420
+        "x": 460,
+        "y": 400
       },
       "interfacePattern": "e1-{n}"
     },
     {
       "id": "pe2",
       "position": {
-        "x": 740,
+        "x": 700,
         "y": 420
       }
+    },
+    {
+      "id": "iperf-server",
+      "position": {
+        "x": 880,
+        "y": 500
+      },
+      "icon": "server"
+    },
+    {
+      "id": "iperf-client",
+      "position": {
+        "x": 140,
+        "y": 480
+      },
+      "icon": "client"
     }
   ],
   "edgeAnnotations": [],

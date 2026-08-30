@@ -4,20 +4,20 @@
   "metadata": {
     "name": "adsqpjm",
     "namespace": "default",
-    "uid": "2da1b392-2221-4807-89a7-a145e125918e",
-    "resourceVersion": "1783789663175010",
+    "uid": "c0c2e8c2-4423-45aa-a46e-90ae0e9d324e",
+    "resourceVersion": "1784183242355002",
     "generation": 1,
-    "creationTimestamp": "2026-07-11T16:54:02Z",
+    "creationTimestamp": "2026-07-16T06:27:22Z",
     "labels": {
-      "grafana.app/deprecatedInternalID": "4331157449936896"
+      "grafana.app/deprecatedInternalID": "1481792375820288"
     },
     "annotations": {
       "grafana.app/createdBy": "access-policy:service",
       "grafana.app/managedBy": "classic-file-provisioning",
       "grafana.app/managerId": "default",
-      "grafana.app/sourceChecksum": "bbee983786c05a4db0b1fb809972616b",
+      "grafana.app/sourceChecksum": "8c18b25f1c75c93454ad27dab698afc2",
       "grafana.app/sourcePath": "/etc/grafana/provisioning/dashboards/dashboard.json",
-      "grafana.app/sourceTimestamp": "1783789658000",
+      "grafana.app/sourceTimestamp": "1784083401000",
       "grafana.app/folder": ""
     }
   },
@@ -223,7 +223,7 @@
           "description": "",
           "id": 10,
           "links": [],
-          "title": "",
+          "title": "gNMI",
           "vizConfig": {
             "group": "status-history",
             "kind": "VizConfig",
@@ -374,7 +374,7 @@
           "description": "",
           "id": 11,
           "links": [],
-          "title": "",
+          "title": "SNMP",
           "vizConfig": {
             "group": "timeseries",
             "kind": "VizConfig",
@@ -432,7 +432,32 @@
                     ]
                   }
                 },
-                "overrides": []
+                "overrides": [
+                  {
+                    "__systemRef": "hideSeriesFrom",
+                    "matcher": {
+                      "id": "byNames",
+                      "options": {
+                        "mode": "exclude",
+                        "names": [
+                          "10.0.0.10 IN"
+                        ],
+                        "prefix": "All except:",
+                        "readOnly": true
+                      }
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.hideFrom",
+                        "value": {
+                          "legend": false,
+                          "tooltip": true,
+                          "viz": true
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               "options": {
                 "annotations": {
@@ -514,7 +539,7 @@
           "description": "",
           "id": 12,
           "links": [],
-          "title": "",
+          "title": "gNMI",
           "vizConfig": {
             "group": "timeseries",
             "kind": "VizConfig",
@@ -572,7 +597,32 @@
                     ]
                   }
                 },
-                "overrides": []
+                "overrides": [
+                  {
+                    "__systemRef": "hideSeriesFrom",
+                    "matcher": {
+                      "id": "byNames",
+                      "options": {
+                        "mode": "exclude",
+                        "names": [
+                          "10.0.0.10 IN"
+                        ],
+                        "prefix": "All except:",
+                        "readOnly": true
+                      }
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.hideFrom",
+                        "value": {
+                          "legend": false,
+                          "tooltip": true,
+                          "viz": true
+                        }
+                      }
+                    ]
+                  }
+                ]
               },
               "options": {
                 "annotations": {
@@ -616,7 +666,7 @@
                       "spec": {
                         "editorMode": "code",
                         "expr": "snmp_mpls_mplsLdpSessionState{agent_host=~\"$Node\"} or snmp_juniper_ldp_jnxMplsLdpSesState{agent_host=~\"$Node\"}",
-                        "legendFormat": "{{index}}",
+                        "legendFormat": "{{lsr_id}}",
                         "range": true
                       },
                       "version": "v0"
@@ -626,24 +676,13 @@
                 }
               ],
               "queryOptions": {},
-              "transformations": [
-                {
-                  "group": "renameByRegex",
-                  "kind": "Transformation",
-                  "spec": {
-                    "options": {
-                      "regex": ".*\\.(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})\\.\\d+\\.\\d+.*",
-                      "renamePattern": "$1"
-                    }
-                  }
-                }
-              ]
+              "transformations": []
             }
           },
           "description": "",
           "id": 13,
           "links": [],
-          "title": "",
+          "title": "SNMP",
           "vizConfig": {
             "group": "state-timeline",
             "kind": "VizConfig",
@@ -695,17 +734,6 @@
                         }
                       },
                       "type": "value"
-                    },
-                    {
-                      "options": {
-                        "match": "null",
-                        "result": {
-                          "color": "dark-red",
-                          "index": 5,
-                          "text": "DOWN"
-                        }
-                      },
-                      "type": "special"
                     }
                   ],
                   "thresholds": {
@@ -759,7 +787,7 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": false,
+                    "hidden": true,
                     "query": {
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
@@ -768,7 +796,7 @@
                       "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "max by (lsr_id) (gnmi_ldp_state_ldp_session_state_int{source=\"$Node\"})",
+                        "expr": "min by (lsr_id) (gnmi_ldp_state_ldp_session_state_int{source=\"$Node\", session_state=\"OPERATIONAL\"} or gnmi_ldp_state_ldp_session_state_int{source=\"$Node\", session_state=\"NON_EXISTENT\"})",
                         "legendFormat": "{{lsr_id}}",
                         "range": true
                       },
@@ -789,14 +817,58 @@
                       "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "max by (ldp_peer) (gnmi_ldp_state_arista_ldp_session_state_int{source=\"$Node\"})",
+                        "expr": "min by (lsr_id) (gnmi_ldp_state_arista_ldp_session_state_int{source=\"$Node\", session_state=\"stateOperational\"} or gnmi_ldp_state_arista_ldp_session_state_int{source=\"$Node\", session_state=\"stateNonExist\"})",
                         "instant": false,
-                        "legendFormat": "{{ldp_peer}}",
+                        "legendFormat": "{{lsr_id}}",
                         "range": true
                       },
                       "version": "v0"
                     },
                     "refId": "B"
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "PBFA97CFB590B2093"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "gnmi_ldp_state_ldp_session_state_int{source=\"$Node\",  session_state=\"OPERATIONAL\"}",
+                        "instant": false,
+                        "legendFormat": "{{lsr_id}}",
+                        "range": true
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "C"
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "PBFA97CFB590B2093"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "gnmi_ldp_state_ldp_session_state_int{source=\"$Node\",  session_state=\"NON_EXISTENT\"}",
+                        "instant": false,
+                        "legendFormat": "{{lsr_id}}",
+                        "range": true
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "D"
                   }
                 }
               ],
@@ -818,7 +890,7 @@
           "description": "",
           "id": 14,
           "links": [],
-          "title": "",
+          "title": "gNMI",
           "vizConfig": {
             "group": "state-timeline",
             "kind": "VizConfig",
@@ -902,6 +974,147 @@
                 "mergeValues": true,
                 "rowHeight": 0.9,
                 "showValue": "auto",
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              }
+            },
+            "version": "13.0.2"
+          }
+        }
+      },
+      "panel-16": {
+        "kind": "Panel",
+        "spec": {
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "PBFA97CFB590B2093"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "docker_container_cpu_usage_percent{container_name=\"$Node\"}",
+                        "legendFormat": "__auto",
+                        "range": true
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "A"
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "PBFA97CFB590B2093"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "docker_container_cpu_usage_percent{container_name=~\".*telegraf.*\"}",
+                        "instant": false,
+                        "legendFormat": "__auto",
+                        "range": true
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "B"
+                  }
+                }
+              ],
+              "queryOptions": {},
+              "transformations": []
+            }
+          },
+          "description": "",
+          "id": 16,
+          "links": [],
+          "title": "",
+          "vizConfig": {
+            "group": "timeseries",
+            "kind": "VizConfig",
+            "spec": {
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "mode": "palette-classic"
+                  },
+                  "custom": {
+                    "axisBorderShow": false,
+                    "axisCenteredZero": false,
+                    "axisColorMode": "text",
+                    "axisLabel": "",
+                    "axisPlacement": "auto",
+                    "barAlignment": 0,
+                    "barWidthFactor": 0.6,
+                    "drawStyle": "line",
+                    "fillOpacity": 10,
+                    "gradientMode": "none",
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
+                    },
+                    "insertNulls": false,
+                    "lineInterpolation": "smooth",
+                    "lineWidth": 1,
+                    "pointSize": 1,
+                    "scaleDistribution": {
+                      "type": "linear"
+                    },
+                    "showPoints": "auto",
+                    "showValues": false,
+                    "spanNulls": false,
+                    "stacking": {
+                      "group": "A",
+                      "mode": "none"
+                    },
+                    "thresholdsStyle": {
+                      "mode": "off"
+                    }
+                  },
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "green",
+                        "value": 0
+                      },
+                      {
+                        "color": "red",
+                        "value": 80
+                      }
+                    ]
+                  },
+                  "unit": "percent"
+                },
+                "overrides": []
+              },
+              "options": {
+                "annotations": {
+                  "clustering": -1,
+                  "multiLane": false
+                },
+                "legend": {
+                  "calcs": [],
+                  "displayMode": "list",
+                  "placement": "bottom",
+                  "showLegend": true
+                },
                 "tooltip": {
                   "hideZeros": false,
                   "mode": "single",
@@ -1557,7 +1770,7 @@
           "description": "",
           "id": 9,
           "links": [],
-          "title": "",
+          "title": "SNMP",
           "vizConfig": {
             "group": "status-history",
             "kind": "VizConfig",
@@ -1754,6 +1967,19 @@
                         "x": 12,
                         "y": 3
                       }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-16"
+                        },
+                        "height": 10,
+                        "width": 24,
+                        "x": 0,
+                        "y": 11
+                      }
                     }
                   ]
                 }
@@ -1776,8 +2002,8 @@
                           "kind": "ElementReference",
                           "name": "panel-13"
                         },
-                        "height": 8,
-                        "width": 12,
+                        "height": 7,
+                        "width": 24,
                         "x": 0,
                         "y": 0
                       }
@@ -1789,10 +2015,10 @@
                           "kind": "ElementReference",
                           "name": "panel-14"
                         },
-                        "height": 8,
-                        "width": 12,
-                        "x": 12,
-                        "y": 0
+                        "height": 7,
+                        "width": 24,
+                        "x": 0,
+                        "y": 7
                       }
                     }
                   ]
@@ -1843,7 +2069,7 @@
                           "name": "panel-11"
                         },
                         "height": 8,
-                        "width": 12,
+                        "width": 24,
                         "x": 0,
                         "y": 8
                       }
@@ -1855,10 +2081,10 @@
                           "kind": "ElementReference",
                           "name": "panel-12"
                         },
-                        "height": 8,
-                        "width": 12,
-                        "x": 12,
-                        "y": 8
+                        "height": 7,
+                        "width": 24,
+                        "x": 0,
+                        "y": 16
                       }
                     }
                   ]

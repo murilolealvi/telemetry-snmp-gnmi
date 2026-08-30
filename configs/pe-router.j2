@@ -133,5 +133,16 @@ snmp {
         authorization read-only;
         routing-instance mgmt_junos;
     }
+    trap-group TRAPS {
+        trap-group TRAPS {
+        version v2;
+        destination-port 1620;
+        routing-instance mgmt_junos;
+        targets {
+            10.10.10.1;
+            {{ nms_ip }};
+            }
+        }
+    }
     routing-instance-access;
 }

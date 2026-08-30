@@ -21,7 +21,8 @@ topology:
       image: telegraf:latest
       mgmt-ipv4: 10.10.10.201
       binds:
-        - configs/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+        #- configs/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+        - configs/snmp-30.conf:/etc/telegraf/telegraf.conf:ro
 
     prometheus:
       #database
@@ -59,8 +60,6 @@ topology:
       startup-config: configs/pe1.cfg
       env:
         CLAB_MGMT_PASSTHROUGH: "true"
-      ports:
-        # - "9339:9339/tcp"
     pe2:
       kind: juniper_vjunosrouter
       mgmt-ipv4: 10.10.10.20
@@ -68,8 +67,6 @@ topology:
       startup-config: configs/pe2.cfg
       env:
         CLAB_MGMT_PASSTHROUGH: "true"
-      ports:
-        # - "9340:9339/tcp"
     #data plane
     p1:
       kind: arista_ceos
@@ -88,20 +85,42 @@ topology:
       kind: linux
       image: pierky/exabgp
       binds:
-        - configs/ce1.conf:/etc/exabgp/exabgp.conf:ro
+        - configs/exabgp/ce1.conf:/etc/exabgp/exabgp.conf:ro
+        - configs/exabgp/route_leak.py:/run/route_leak.py:rw
+      cmd: exabgp /etc/exabgp/exabgp.conf
       exec:
-        #- ip addr add 192.168.11.2/24 dev eth1
-        #- ip route add default via 192.168.12.1
-        - exabgp /etc/exabgp/exabgp.conf &
+        - sysctl -w net.ipv4.ip_forward=1
+        - ip addr add 10.50.0.1/24 dev eth2
+        - ip addr add 192.168.11.2/24 dev eth1
+        - ip route del default
+        - ip route add default via 192.168.11.1 dev eth1
     ce2:
       kind: linux
       image: pierky/exabgp
       binds:
-        - configs/ce2.conf:/etc/exabgp/exabgp.conf:ro
+        - configs/exabgp/ce2.conf:/etc/exabgp/exabgp.conf:ro
+      cmd: exabgp /etc/exabgp/exabgp.conf
       exec:
-        #- ip addr add 192.168.12.2/24 dev eth1
-        #- ip route add default via 192.168.12.1
-        - exabgp /etc/exabgp/exabgp.conf &
+        - sysctl -w net.ipv4.ip_forward=1
+        - ip addr add 10.60.0.1/24 dev eth2
+        - ip addr add 192.168.12.2/24 dev eth1
+        - ip route del default
+        - ip route add default via 192.168.12.1 dev eth1
+    iperf-client:
+      kind: linux
+      image: wbitt/network-multitool
+      exec:
+        - ip addr add 10.50.0.100/24 dev eth1
+        - ip route del default
+        - ip route add default via 10.50.0.1
+    iperf-server:
+      kind: linux
+      image: wbitt/network-multitool
+      exec:
+        - ip addr add 10.60.0.100/24 dev eth1
+        - ip route del default
+        - ip route add default via 10.60.0.1
+        - iperf3 -s -D
   links:
     # Route Reflector to PEs
     - endpoints: [ "rr:eth1", "pe1:ge-0/0/0" ]
@@ -125,3 +144,8 @@ topology:
       ipv4: [ "192.168.11.1/24", "192.168.11.2/24" ]
     - endpoints: [ "pe2:ge-0/0/1", "ce2:eth1" ]
       ipv4: [ "192.168.12.1/24", "192.168.12.2/24" ]
+    # iperf3 to Customer Edge
+    - endpoints: [ "ce1:eth2", "iperf-client:eth1" ]
+      ipv4: [ "10.50.0.1/24", "10.50.0.100/24" ]
+    - endpoints: [ "ce2:eth2", "iperf-server:eth1" ]
+      ipv4: [ "10.60.0.1/24", "10.60.0.100/24" ]
