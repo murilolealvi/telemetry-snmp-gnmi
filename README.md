@@ -10,7 +10,7 @@ The topology proposed is heterogenous:
 *   **Provider Core (P) and Route Reflector (RR):** Arista `cEOS` (MPLS label switching and iBGP reflection)
 *   **Customer Edge (CE):** ExaBGP containers (Automated route injection and anomaly generation)
 
-![topology](image.png)
+![topology](topology.png)
 
 ## Stack
 
